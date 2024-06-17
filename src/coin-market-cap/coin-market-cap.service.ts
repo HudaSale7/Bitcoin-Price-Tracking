@@ -9,9 +9,10 @@ export class CoinMarketCapService {
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleCron() {
     try {
-      const currentPrice = await this.getBitcoinCurrentPrice();
-      const previousPrice = await this.getBitcoinPreviousPrice();
+      let currentPrice = await this.getBitcoinCurrentPrice();
+      let previousPrice = await this.getBitcoinPreviousPrice();
       let changeAmount = currentPrice - previousPrice;
+      if (previousPrice === 0) previousPrice = 1;
       changeAmount = (changeAmount / previousPrice) * 100;
 
       await this.prisma.coinMarketCap.create({
